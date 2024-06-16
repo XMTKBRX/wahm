@@ -11,10 +11,9 @@
   "presets": [
     "@babel/preset-env"
   ],
- "dependencies": {
+ "dependencies":[
     "express": "^4.17.1" 
-    } 
-  } 
+   ], 
   "keywords": [
     "Facebook",
     "Messenger",
