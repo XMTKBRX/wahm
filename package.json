@@ -11,6 +11,14 @@
   "presets": [
     "@babel/preset-env"
   ],
+  "keywords": [
+    "Facebook",
+    "Messenger",
+    "SpermLord",
+    "Gilgamesh Sama"
+  ],
+  "license": "GPL-3.0",
+  "author": "Gilgamesh Sama",
   "dependencies": {
     "@distube/ytdl-core": "^4.13.3",
     "@miraipr0ject/assets": "",
@@ -21,7 +29,7 @@
     "chalk": "^4.1.2",
     "cheerio": "^1.0.0-rc.12",
     "child_process": "^1.0.2",
-    "express": "^4.17.1",
+    "express": "^4.19.2",
     "fb-chat-api-temp": "git+https://github.com/ntkhang03/fb-chat-api-temp.git",
     "form-data": "^4.0.0",
     "fs-extra": "^11.2.0",
@@ -46,14 +54,6 @@
     "websocket-stream": "^5.5.2",
     "youtube-search-api": "^1.2.1"
   },
-  "keywords": [
-    "Facebook",
-    "Messenger",
-    "SpermLord",
-    "Gilgamesh Sama"
-  ],
-  "license": "GPL-3.0",
-  "author": "Gilgamesh Sama",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YANDEVA/BotPack.git"
