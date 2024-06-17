@@ -1,38 +1,23 @@
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;  // استخدام المنفذ المقدم من Heroku أو الافتراضي 3000
+
+app.get('/', (req, res) => {
+    res.send('مرحبًا بالعالم!');
+});
+
+app.listen(port, () => {
+    console.log(`الخادم يعمل على المنفذ ${port}`);
+});
+
 const { spawn } = require("child_process");
 const { readFileSync } = require("fs-extra");
-const http = require("http");
 const axios = require("axios");
 const semver = require("semver");
 const logger = require("./utils/log");
 
-/////////////////////////////////////////////
-//========= Check node.js version =========//
-/////////////////////////////////////////////
-
-const nodeVersion = semver.parse(process.version);
-if (nodeVersion.major < 13) {
-    logger(`Your Node.js ${process.version} is not supported, it required Node.js 13 to run bot!`, "error");
-    process.exit(0);
-}
-
-///////////////////////////////////////////////////////////
-//========= Create website for dashboard/uptime =========//
-///////////////////////////////////////////////////////////
-
-const dashboard = http.createServer(function (_req, res) {
-    res.writeHead(200, "OK", { "Content-Type": "text/plain" });
-    res.write("HI! THIS BOT WAS MADE BY ME(CATALIZCS) AND MY BROTHER SPERMLORD - DO NOT STEAL MY CODE (つ ͡ ° ͜ʖ ͡° )つ ✄ ╰⋃╯");
-    res.end();
-});
-
-dashboard.listen(process.env.port || 0);
-
-/////////////////////////////////////////////////////////
-//========= Create start bot and make it loop =========//
-/////////////////////////////////////////////////////////
-
 function startBot(message) {
-    (message) ? logger(message, "[ Starting ]") : "";
+    if (message) logger(message, "[ Starting ]");
 
     const child = spawn("node", ["--trace-warnings", "--async-stack-traces", "umaru.js"], {
         cwd: __dirname,
@@ -41,56 +26,24 @@ function startBot(message) {
     });
 
     child.on("close", (codeExit) => {
-        if (codeExit != 0 || global.countRestart && global.countRestart < 5) {
+        if (codeExit !== 0 || (global.countRestart && global.countRestart < 5)) {
             startBot("Starting up...");
-            global.countRestart += 1;
+            global.countRestart = (global.countRestart || 0) + 1;
             return;
-        } else return;
+        }
     });
 
-    child.on("error", function(error) {
+    child.on("error", (error) => {
         logger("An error occurred: " + JSON.stringify(error), "[ Starting ]");
     });
 }
-
-////////////////////////////////////////////////
-//========= Check update from Github =========//
-////////////////////////////////////////////////
 
 axios.get("https://raw.githubusercontent.com/umaruchan0x1861/umarubot1.1.1/main/package.json").then((res) => {
     logger(res.data.name, "[ NAME ]");
     logger("Version: " + res.data.version, "[ VERSION ]");
     logger(res.data.description, "[ DESCRIPTION ]");
+}).catch((error) => {
+    logger("Failed to fetch package.json from GitHub: " + error.message, "[ ERROR ]");
+});
 
-    // Add your logic for comparing versions and updating here
-    // Example logic:
-    /*
-    const local = JSON.parse(readFileSync('./package.json'));
-    if (semver.lt(local.version, res.data.version)) {
-        if (local.autoUpdate === true) {
-            logger('A new update is available, start update processing...', '[ UPDATE ]');
-            const updateBot = {};
-            updateBot.cwd = __dirname;
-            updateBot.stdio = 'inherit';
-            updateBot.shell = true;
-            const child = spawn('node', ['update.js'], updateBot);
-            child.on('exit', function () {
-                return process.exit(0);
-            });
-            child.on('error', function (error) {
-                logger('Unable to update:' + JSON.stringify(error), '[ CHECK UPDATE ]');
-            });
-        } else {
-            logger('A new update is available! Open terminal/cmd and type "node update" to update!', '[ UPDATE ]');
-            startBot();
-        }
-    } else {
-        logger('You are using the latest version!', '[ CHECK UPDATE ]');
-        startBot();
-    }
-    */
-}).catch(err => logger("Unable to check update.", "[ CHECK UPDATE ]"));
-
-// Start the bot
 startBot();
-
